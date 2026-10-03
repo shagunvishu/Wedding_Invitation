@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation | Shagun & Vishu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Great+Vibes&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal-gold: #FFD700;
+            --dark-royal-green: #0A2F1D;
+            --light-gold: #FFF0A5;
+            --burgundy: #580017;
+            --light-burgundy: rgba(120, 20, 45, 0.98);
+            --deep-maroon: #3A000E;
+            --text-light: #FFFDF9;
+            --jaggo-orange-pink: #D84A38;
+            --creamy: #FFFFF0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--burgundy); color: var(--text-light); text-align: center; overflow-x: hidden; }
+
+        /* Golden Petals Layer */
+        #petals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows user clicks to pass through */
+            z-index: 1000;
+            overflow: hidden;
+        }
+        
+        .petal {
+            position: absolute;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 15px 0 15px 0;
+            opacity: 0.8;
+            box-shadow: 0 0 4px rgba(255, 215, 0, 0.6);
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            0% {
+                top: -10%;
+                transform: translateX(0) rotate(0deg);
+                opacity: 0.9;
+            }
+            100% {
+                top: 110%;
+                transform: translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Opening Split Envelope Overlay */
+        #opening-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 2000; display: flex; justify-content: center; align-items: center; overflow: hidden; background-color: transparent; transition: opacity 1.2s ease-in-out; }
+        .door { position: absolute; top: 0; width: 50%; height: 100%; background-image: url('Opening.jpg'); background-size: 200% 100%; transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1); z-index: 2; }
+        .door-left { left: 0; background-position: left center; }
+        .door-right { right: 0; background-position: right center; }
+        .seal-button { position: absolute; z-index: 3; width: 100px; height: 100px; cursor: pointer; transition: opacity 0.8s ease, transform 0.8s ease; display: flex; justify-content: center; align-items: center; }
+        .seal-circle { width: 90px; height: 90px; border-radius: 50%; background: radial-gradient(circle, #A30000, #580017); border: 3px solid var(--royal-gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); color: var(--royal-gold); font-family: 'Cinzel', serif; font-weight: 800; font-size: 1rem; display: flex; justify-content: center; align-items: center; text-shadow: 1px 1px 3px #000; }
+        #opening-container.opened { opacity: 0; pointer-events: none; }
+        #opening-container.opened .door-left { transform: translateX(-100%); }
+        #opening-container.opened .door-right { transform: translateX(100%); }
+        #opening-container.opened .seal-button { opacity: 0; transform: scale(0.5); }
+
+        /* Main Container Layout */
+        .main-container { max-width: 620px; margin: 0 auto; padding: 20px 10px; opacity: 0; transition: opacity 1.2s ease-in-out; }
+        
+        /* Scroll Fade-in & Fade-out */
+        .fade-section { opacity: 0; transform: translateY(40px); transition: opacity 0.9s cubic-bezier(0.25, 1, 0.5, 1), transform 0.9s cubic-bezier(0.25, 1, 0.5, 1); margin: 40px 0; }
+        .fade-section.visible { opacity: 1; transform: translateY(0); }
+
+        /* Timeline Grid Wrapper (Dates on Right) */
+        .timeline-row { display: flex; align-items: center; gap: 12px; position: relative; }
+        .timeline-card { flex: 1; }
+        .timeline-date-tag { width: 90px; min-width: 90px; background: rgba(255, 215, 0, 0.15); border: 1.5px solid var(--royal-gold); border-radius: 12px; padding: 12px 6px; text-align: center; color: var(--light-gold); font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .timeline-date-tag .day { font-size: 1.5rem; color: var(--royal-gold); font-family: 'Cinzel', serif; line-height: 1; }
+        .timeline-date-tag .month { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+        /* Background Cards */
+        .card-bg { border-radius: 18px; padding: 30px 18px; border: 2px solid var(--royal-gold); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: rgba(58, 0, 14, 0.85); position: relative; min-height: 520px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.6); overflow: hidden; }
+        
+        /* Card Container Alignment for First Page */
+        .card-bg.bg-save {
+            justify-content: flex-start !important;
+            padding-top: 15px !important;
+            padding-bottom: 25px !important;
+        }
+        
+        /* Expanded Wreath Monogram Layout */
+        .sv-monogram-container {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0px auto 10px auto; /* Keeps monogram high in the top open area */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Burgundy S V Monogram (Sized to fit inside leaves without intersecting) */
+        .sv-text-group {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            font-family: 'Great Vibes', cursive;
+            color: var(--burgundy);
+            font-size: 2.7rem; /* Reduced font size so text stays inside the leaf ring */
+            font-weight: 700;
+            line-height: 1;
+            opacity: 0;
+            transform: scale(0.85);
+            transition: opacity 1.5s ease 0.3s, transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s;
+        }
+        
+        .sv-text-group .char-s {
+            transform: translateY(-5px);
+            margin-right: -4px;
+        }
+        
+        .sv-text-group .char-v {
+            transform: translateY(3px);
+        }
+        
+        /* Royal Green Open Laurel Wreath SVG */
+        .royal-wreath-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2;
+            fill: #0A2F1D; /* Royal Green */
+            stroke: #0A2F1D;
+            clip-path: inset(100% 0 0 0);
+            opacity: 0;
+            transition: clip-path 2.0s cubic-bezier(0.25, 1, 0.5, 1) 0.6s, opacity 0.8s ease 0.6s;
+        }
+        
+        /* Reveal Animations Triggered on Opening */
+        #opening-container.opened ~ .main-container .sv-text-group {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        #opening-container.opened ~ .main-container .royal-wreath-svg {
+            opacity: 1;
+            clip-path: inset(0 0 0 0);
+        }
+        
+        .first-page-content {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 1.5s ease 2.2s, transform 1.5s ease 2.2s;
+            margin-top: 70px; /* Pushes Punjabi Gurbani & family text down below Khanda */
+        }
+        
+        #opening-container.opened ~ .main-container .first-page-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+                        
+        /* 4. First Page Extra Top and Bottom Padding */
+        .card-bg.bg-save { padding-top: 55px; padding-bottom: 55px; }
+
+        .card-bg.bg-haldi { justify-content: flex-start; padding-top: 60px; }
+        .card-bg.bg-sukh { justify-content: flex-end; padding-bottom: 70px; }
+        
+        .bg-opening { background-image: url('Opening.jpg'); }
+        .bg-save { background-image: url('FirstPage.jpg'); }
+        .bg-sukh { background-image: url('SukhmaniSahibPath.jpg'); }
+        .bg-haldi { background-image: url('Haldi_Shagun.jpg'); }
+        .bg-jaggo { background-image: url('Jaggo.jpg'); }
+        .bg-anand { background-image: url('Anand%20Karaj.jpg'); }
+        
+        .text-burgundy { color: var(--burgundy) !important; font-weight: 700; }
+        .text-jaggo { color: var(--jaggo-orange-pink) !important; font-weight: 800; }
+        .text-glow-gold { color: var(--royal-gold); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        h1, h2, h3 { font-family: 'Cinzel', serif; }
+        .script-font { font-family: 'Great Vibes', cursive; }
+
+        /* 2 & 3. Scratch Card Container (No Border & 0.2 Transparent Background) */
+        .scratch-container { position: relative; width: 100%; max-width: 310px; min-height: 90px; margin-top: 12px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.4); background: rgba(255, 253, 249, 0.2); }
+        .scratch-content { padding: 12px 10px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--burgundy); font-size: 0.78rem; }
+        canvas.scratch-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; z-index: 10; touch-action: none; }
+
+        /* Anand Karaj Curtain Container */
+        .curtain-container { position: relative; width: 100%; max-width: 310px; min-height: 150px; margin-top: 10px; border-radius: 10px; overflow: hidden; background: rgba(255, 253, 249, 0.2); cursor: pointer; }
+        .side-curtain { position: absolute; top: 0; width: 50%; height: 100%; background-color: var(--light-burgundy); z-index: 10; transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1); opacity: 1; }
+        .side-curtain.left { left: 0; border-right: 1.5px solid var(--royal-gold); }
+        .side-curtain.right { right: 0; border-left: 1.5px solid var(--royal-gold); }
+        .curtain-text-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 11; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--royal-gold); font-weight: 700; pointer-events: none; transition: opacity 0.8s ease; background: rgba(58, 0, 14, 0.4); padding: 8px; }
+        .curtain-container.open .side-curtain.left { transform: translateX(-100%); }
+        .curtain-container.open .side-curtain.right { transform: translateX(100%); }
+        .curtain-container.open .curtain-text-overlay { opacity: 0; }
+
+        /* Flip Card */
+        .flip-card { background-color: transparent; width: 100%; height: 380px; perspective: 1000px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; cursor: pointer; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; border: 2px solid var(--royal-gold); box-shadow: 0 8px 25px rgba(0,0,0,0.6); padding: 25px 20px; }
+        .flip-card-front { background: rgba(58, 0, 23, 0.92); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .flip-card-back { background: var(--deep-maroon); transform: rotateY(180deg); display: flex; justify-content: center; align-items: center; padding: 0; overflow: hidden; }
+        .couple-photo { width: 100%; height: 100%; object-fit: cover; border-radius: 13px; }
+        
+        /* Countdown Section */
+        .countdown-card { background: rgba(58, 0, 14, 0.95); border: 2px solid var(--royal-gold); border-radius: 18px; padding: 30px 15px; margin: 40px 0; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
+        .countdown-grid { display: flex; justify-content: center; gap: 12px; margin: 20px 0 15px; }
+        .time-box { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--royal-gold); border-radius: 10px; padding: 10px 14px; min-width: 65px; }
+        .time-box .num { font-size: 1.6rem; font-family: 'Cinzel', serif; font-weight: 700; color: var(--royal-gold); }
+        .time-box .label { font-size: 0.65rem; text-transform: uppercase; color: var(--light-gold); letter-spacing: 1px; margin-top: 2px; }
+
+        .music-btn { position: fixed; bottom: 20px; right: 20px; z-index: 1500; background: var(--burgundy); color: var(--light-gold); border: 2px solid var(--royal-gold); border-radius: 50%; width: 50px; height: 50px; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
+        .btn-link { display: inline-block; margin-top: 8px; padding: 6px 16px; background: var(--burgundy); color: var(--light-gold); text-decoration: none; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--royal-gold); }
+    </style>
+</head>
+<body>
+    <div id="petals-container"></div>
+    <audio id="weddingAudio" loop preload="auto"><source src="WeddingInvitationAudio.mp3" type="audio/mpeg"></audio>
+    <button class="music-btn" id="musicToggle" onclick="toggleAudio()" title="Toggle Music">🎵</button>
+    
+    <!-- Opening Envelope Cover -->
+    <div id="opening-container"><div class="door door-left"></div><div class="door door-right"></div><div class="seal-button" onclick="openInvitation()"><div class="seal-circle">OPEN</div></div></div>
+
+    <div class="main-container" id="mainContent">
+        
+        <!-- First Page Cover Card -->
+        <div class="fade-section card-bg bg-save">
+            
+            <!-- Monogram Container (Shifted Up in Top Circle Space) -->
+            <div class="sv-monogram-container">
+                
+                <!-- Burgundy S V Monogram (Positioned Comfortably Inside Wreath) -->
+                <div class="sv-text-group">
+                    <span class="char-s">S</span>
+                    <span class="char-v">V</span>
+                </div>
+        
+                <!-- Smaller Open Laurel Leaf Wreath SVG -->
+                <svg class="royal-wreath-svg" viewBox="0 0 100 100">
+                    <!-- Left Branch -->
+                    <g>
+                        <path d="M 46,84 C 28,82 16,66 16,50 C 16,32 28,20 38,14" fill="none" stroke="#0A2F1D" stroke-width="2"/>
+                        <path d="M 44,85 Q 37,90 33,83 Q 40,81 44,85 Z" />
+                        <path d="M 33,80 Q 23,84 21,75 Q 30,73 33,80 Z" />
+                        <path d="M 23,70 Q 13,72 13,63 Q 21,61 23,70 Z" />
+                        <path d="M 17,58 Q 7,58 9,49 Q 17,49 17,58 Z" />
+                        <path d="M 15,44 Q 7,40 11,32 Q 18,35 15,44 Z" />
+                        <path d="M 17,32 Q 10,25 17,18 Q 22,25 17,32 Z" />
+                        <path d="M 24,22 Q 19,13 28,8 Q 31,17 24,22 Z" />
+                        <path d="M 34,14 Q 33,5 41,3 Q 41,12 34,14 Z" />
+                    </g>
+                
+                    <!-- Right Branch -->
+                    <g>
+                        <path d="M 54,84 C 72,82 84,66 84,50 C 84,32 72,20 62,14" fill="none" stroke="#0A2F1D" stroke-width="2"/>
+                        <path d="M 56,85 Q 63,90 67,83 Q 60,81 56,85 Z" />
+                        <path d="M 67,80 Q 77,84 79,75 Q 70,73 67,80 Z" />
+                        <path d="M 77,70 Q 87,72 87,63 Q 79,61 77,70 Z" />
+                        <path d="M 83,58 Q 93,58 91,49 Q 83,49 83,58 Z" />
+                        <path d="M 85,44 Q 93,40 89,32 Q 82,35 85,44 Z" />
+                        <path d="M 83,32 Q 90,25 83,18 Q 78,25 83,32 Z" />
+                        <path d="M 76,22 Q 81,13 72,8 Q 69,17 76,22 Z" />
+                        <path d="M 66,14 Q 67,5 59,3 Q 59,12 66,14 Z" />
+                    </g>
+                </svg>
+            </div>
+        
+            <!-- Content Area (Cleanly Placed Below Khanda Motif) -->
+            <div class="first-page-content">
+                <p class="text-burgundy" style="font-family: 'Noto Serif Gurmukhi', serif; font-size: 0.88rem; line-height: 1.6; font-weight: 700;">
+                    ਸਤਿਗੁਰ ਦਾਤੈ ਕਾਜੁ ਰਚਾਇਆ ਆਪਣੀ ਮੇਹਰ ਕਰਾਈ ॥<br>
+                    ਦਾਸਾਂ ਕਾਰਜ ਆਪਿ ਸਵਾਰੇ ਇਹੁ ਉਸਦੀ ਵਡਿਆਈ ॥
+                </p>
+        
+                <p class="text-burgundy" style="font-style: italic; font-size: 0.82rem; margin: 10px 0 10px 0; line-height: 1.5;">
+                    Together with their families,<br>
+                    invite you to celebrate their<br>
+                    wedding union
+                </p>
+                
+                <div style="line-height: 1.4; font-size: 0.82rem;" class="text-burgundy">
+                    <p><strong>Shagun</strong><br>D/o S. Ranbir Singh Nibber & Kulbir Kaur<br><em>Amritsar, Punjab</em></p>
+                    <div class="script-font" style="font-size: 1rem; margin: 2px 0;">&</div>
+                    <p><strong>Vishu</strong><br>S/o Subrahmanyam Katta & Madhavi Katta<br><em>Vijayawada, Andhra Pradesh</em></p>
+                </div>
+            </div>
+        
+        </div>
+        
+        <!-- Our Story Text -->
+        <div class="fade-section">
+            <p style="font-size: 0.86rem; color: var(--light-gold); margin-bottom: 8px;">(Tap card to flip for photo)</p>
+            <div class="flip-card" id="storyFlipCard" onclick="flipCard()">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h2 class="script-font text-glow-gold" style="font-size: 2.2rem; margin-bottom: 12px;">Our Story</h2>
+                        <p style="font-size: 0.88rem; line-height: 1.7; color: #FFFDF9; font-weight: 500;">
+                            From Punjab to Andhra Pradesh,<br>
+                            destiny brought us together in Germany.<br><br>
+                            What began with university days and shared part-time jobs<br>
+                            turned into endless laughter, embracing cultures, and a love<br>
+                            that grows stronger every day.<br><br>
+                            <em>Today, we begin our greatest adventure yet—and we can’t wait<br>
+                            to celebrate this special chapter with the people we love most. ❤️</em>
+                        </p>
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="WeddingInvitationPic.jpg" alt="Shagun and Vishu" class="couple-photo">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event 1: Sukhmani Sahib Path -->
+        <div class="fade-section timeline-row">
+            <div class="timeline-card card-bg bg-sukh">
+                <h2 class="text-burgundy" style="font-size: 1.35rem; line-height: 1.2;">Sukhmani<br>Sahib Path</h2>
+                <div class="scratch-container">
+                    <canvas class="scratch-canvas" id="canvas-sukhmani" data-color="#FFB6C1" data-text="Scratch for Venue"></canvas>
+                    <div class="scratch-content">
+                        <p class="text-burgundy" style="font-weight: 700;">11:00 AM - 1:00 PM</p>
+                        <p class="text-burgundy" style="margin-top: 3px;">508 Darshan Avenue, D Block, GT Road, Amritsar</p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Darshan+Avenue+D+Block+Amritsar" target="_blank" class="btn-link">Location Map</a>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-date-tag">
+                <div class="day">19</div>
+                <div class="month">Nov</div>
+            </div>
+        </div>
+
+        <!-- Event 2: Shagun & Haldi Ceremony -->
+        <div class="fade-section timeline-row">
+            <div class="timeline-card card-bg bg-haldi">
+                <h2 class="text-burgundy" style="font-size: 1.35rem; line-height: 1.2;">Shagun &<br>Haldi</h2>
+                <div class="scratch-container">
+                    <canvas class="scratch-canvas" id="canvas-haldi" data-color="#FFD700" data-text="Scratch for Venue"></canvas>
+                    <div class="scratch-content">
+                        <p class="text-burgundy" style="font-weight: 700;">11:00 AM - 4:00 PM</p>
+                        <p class="text-burgundy" style="margin-top: 3px;">Green Wood Villa, By-Pass Near Ryan Intl School, Golden Gate, Amritsar</p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Green+Wood+Villa+By-Pass+Near+Ryan+International+School+Golden+Gate+Amritsar" target="_blank" class="btn-link">Location Map</a>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-date-tag">
+                <div class="day">20</div>
+                <div class="month">Nov</div>
+            </div>
+        </div>
+
+        <!-- Event 3: Jaggo Night -->
+        <div class="fade-section timeline-row">
+            <div class="timeline-card card-bg bg-jaggo">
+                <h2 class="text-jaggo" style="font-size: 1.35rem;">Jaggo Night</h2>
+                <div class="scratch-container">
+                    <canvas class="scratch-canvas" id="canvas-jaggo" data-color="#FF7F50" data-text="Scratch for Venue"></canvas>
+                    <div class="scratch-content">
+                        <p class="text-burgundy" style="font-weight: 700;">7:00 PM Onwards</p>
+                        <p class="text-burgundy" style="margin-top: 3px;">Darshan Avenue, D Block, Amritsar</p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Darshan+Avenue+D+Block+Amritsar" target="_blank" class="btn-link">Location Map</a>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-date-tag">
+                <div class="day">21</div>
+                <div class="month">Nov</div>
+            </div>
+        </div>
+
+        <!-- Event 4: Anand Karaj -->
+        <div class="fade-section timeline-row">
+            <div class="timeline-card card-bg bg-anand">
+                <h2 class="text-burgundy" style="font-size: 1.35rem;">Anand Karaj</h2>
+                
+                <p class="script-font text-burgundy" style="font-size: 1.5rem; margin: 4px 0 2px;">Save the Date</p>
+                
+                <div class="curtain-container" id="anandCurtain" onclick="openCurtain()">
+                    <div class="side-curtain left"></div>
+                    <div class="side-curtain right"></div>
+                    
+                    <div class="curtain-text-overlay">
+                        <span style="font-size: 1.3rem;">✨</span>
+                        <p class="script-font" style="font-size: 1.4rem; color: var(--royal-gold); margin-top: 2px;">Celebrate With Us</p>
+                        <small style="color: var(--light-gold); font-size: 0.7rem;">Tap to Reveal Venue</small>
+                    </div>
+
+                    <div class="scratch-content">
+                        <p class="text-burgundy" style="font-weight: 700;">22nd November | 11:00 AM Onwards</p>
+                        <p class="text-burgundy" style="margin-top: 3px;">Best Western Swaran, Near Golden Gate, Amritsar</p>
+                        <a href="https://maps.google.com/?q=Best+Western+Swaran+Golden+Gate+Amritsar" target="_blank" class="btn-link">Location Map</a>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-date-tag">
+                <div class="day">22</div>
+                <div class="month">Nov</div>
+            </div>
+        </div>
+
+        <!-- Countdown Timer -->
+        <div class="fade-section countdown-card">
+            <h3 class="script-font text-glow-gold" style="font-size: 2.2rem; margin-bottom: 5px;">Counting Down to Our Forever</h3>
+            <p style="font-size: 0.8rem; color: var(--light-gold); font-style: italic;">We are together forever ❤️</p>
+            
+            <div class="countdown-grid">
+                <div class="time-box"><div class="num" id="cd-days">00</div><div class="label">Days</div></div>
+                <div class="time-box"><div class="num" id="cd-hours">00</div><div class="label">Hours</div></div>
+                <div class="time-box"><div class="num" id="cd-mins">00</div><div class="label">Mins</div></div>
+                <div class="time-box"><div class="num" id="cd-secs">00</div><div class="label">Secs</div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function openInvitation() { 
+            const opening = document.getElementById('opening-container'); 
+            const mainContent = document.getElementById('mainContent'); 
+            const audio = document.getElementById('weddingAudio'); 
+            
+            opening.classList.add('opened'); 
+            audio.play().catch(e => console.log('Autoplay prevented')); 
+            
+            setTimeout(() => { 
+                mainContent.style.opacity = '1'; 
+                setTimeout(() => { opening.style.display = 'none'; }, 1200); 
+            }, 600); 
+        }
+
+        function toggleAudio() { 
+            const audio = document.getElementById('weddingAudio'); 
+            const btn = document.getElementById('musicToggle'); 
+            if (audio.paused) { 
+                audio.play(); 
+                btn.textContent = '🎵'; 
+            } else { 
+                audio.pause(); 
+                btn.textContent = '🔇'; 
+            } 
+        }
+
+        function flipCard() { 
+            document.getElementById('storyFlipCard').classList.toggle('flipped'); 
+        }
+
+        function openCurtain() { 
+            document.getElementById('anandCurtain').classList.add('open'); 
+        }
+
+        const observer = new IntersectionObserver((entries) => { 
+            entries.forEach(entry => { 
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible'); 
+                } else {
+                    entry.target.classList.remove('visible'); 
+                }
+            }); 
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.fade-section').forEach(section => observer.observe(section));
+        function createGoldenPetals() {
+            const container = document.getElementById('petals-container');
+            const petalCount = 25; // Number of visible falling petals
+        
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.classList.add('petal');
+        
+                // Randomize size, starting position, animation duration, and delay
+                const size = Math.random() * 8 + 10; // Size between 10px and 18px
+                petal.style.width = `${size}px`;
+                petal.style.height = `${size * 1.4}px`;
+                petal.style.left = `${Math.random() * 100}%`;
+                petal.style.animationDuration = `${Math.random() * 5 + 5}s`; // Fall duration between 5s and 10s
+                petal.style.animationDelay = `${Math.random() * 5}s`;
+        
+                container.appendChild(petal);
+            }
+        }
+        
+        // Initialize petals when page loads
+        window.addEventListener('load', createGoldenPetals);
+        
+        function initScratchCard(canvasId) { 
+            const canvas = document.getElementById(canvasId); 
+            if (!canvas) return; 
+            const ctx = canvas.getContext('2d'); 
+            const color = canvas.getAttribute('data-color'); 
+            const text = canvas.getAttribute('data-text'); 
+        
+            function resizeCanvas() { 
+                canvas.width = canvas.parentElement.offsetWidth; 
+                canvas.height = canvas.parentElement.offsetHeight; 
+                ctx.globalCompositeOperation = 'source-over'; 
+                ctx.fillStyle = color; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height); 
+                ctx.font = 'bold 12px Montserrat, sans-serif'; 
+                ctx.fillStyle = '#580017'; 
+                ctx.textAlign = 'center'; 
+                ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 4); 
+            } 
+            
+            resizeCanvas(); 
+            let isDrawing = false; 
+        
+            // Function to check how much of the canvas has been scratched
+            function checkScratchPercentage() {
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
+                let clearPixels = 0;
+        
+                // Loop through alpha channel (every 4th value)
+                for (let i = 3; i < pixels.length; i += 4) {
+                    if (pixels[i] === 0) {
+                        clearPixels++;
+                    }
+                }
+        
+                const percentageScratched = (clearPixels / (pixels.length / 4)) * 100;
+        
+                // Once 35% or more is cleared, enable pointer-events so buttons are clickable
+                if (percentageScratched > 40) {
+                    canvas.style.pointerEvents = 'none'; // Allows clicks to pass through to the button underneath
+                    canvas.style.transition = 'opacity 0.5s ease';
+                    canvas.style.opacity = '0'; // Smoothly hide remaining canvas fragments
+                }
+            }
+        
+            function scratch(e) { 
+                if (!isDrawing) return; 
+                const rect = canvas.getBoundingClientRect(); 
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX; 
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY; 
+                ctx.globalCompositeOperation = 'destination-out'; 
+                ctx.beginPath(); 
+                ctx.arc(clientX - rect.left, clientY - rect.top, 22, 0, Math.PI * 2); 
+                ctx.fill(); 
+        
+                checkScratchPercentage(); // Check scratch progress on each movement
+            } 
+        
+            canvas.addEventListener('mousedown', () => isDrawing = true); 
+            canvas.addEventListener('mouseup', () => isDrawing = false); 
+            canvas.addEventListener('mouseleave', () => isDrawing = false); 
+            canvas.addEventListener('mousemove', scratch); 
+            canvas.addEventListener('touchstart', () => isDrawing = true); 
+            canvas.addEventListener('touchend', () => isDrawing = false); 
+            canvas.addEventListener('touchmove', scratch); 
+        }
+
+        function startCountdown() {
+            const weddingDate = new Date("November 22, 2026 11:00:00").getTime();
+            
+            setInterval(() => {
+                const now = new Date().getTime();
+                const distance = weddingDate - now;
+
+                if (distance < 0) {
+                    document.getElementById("cd-days").innerText = "00";
+                    document.getElementById("cd-hours").innerText = "00";
+                    document.getElementById("cd-mins").innerText = "00";
+                    document.getElementById("cd-secs").innerText = "00";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("cd-days").innerText = days < 10 ? "0" + days : days;
+                document.getElementById("cd-hours").innerText = hours < 10 ? "0" + hours : hours;
+                document.getElementById("cd-mins").innerText = minutes < 10 ? "0" + minutes : minutes;
+                document.getElementById("cd-secs").innerText = seconds < 10 ? "0" + seconds : seconds;
+            }, 1000);
+        }
+
+        window.addEventListener('load', () => { 
+            initScratchCard('canvas-sukhmani'); 
+            initScratchCard('canvas-haldi'); 
+            initScratchCard('canvas-jaggo'); 
+            startCountdown();
+        });
+
+        // Automatically pause music when Chrome/browser is minimized or tab is switched
+        document.addEventListener('visibilitychange', () => {
+            const audio = document.getElementById('weddingAudio');
+            const btn = document.getElementById('musicToggle');
+        
+            if (document.hidden) {
+                if (!audio.paused) {
+                    audio.pause();
+                    audio.dataset.wasPlaying = 'true'; // Remember state
+                }
+            } else {
+                // Resume playback only if it was playing before minimizing
+                if (audio.dataset.wasPlaying === 'true') {
+                    audio.play().catch(e => console.log('Autoplay prevented'));
+                    audio.dataset.wasPlaying = 'false';
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
